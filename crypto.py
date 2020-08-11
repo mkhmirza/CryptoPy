@@ -21,14 +21,26 @@ class Cryptography(object):
         self.outputFile(token, newFileName)
     
     def outputFile(self, data, outputFileName):
-        with open(outputFileName, 'w') as file:
-            file.write(data.__str__())
+        with open(outputFileName, 'wb') as file:
+            file.write(data)
 
     def generateKey(self):
         key = Fernet.generate_key()
-        with open("key.key",'w') as file:
-            file.write(key.__str__())
+        with open("key.key",'wb') as file:
+            file.write(key)
         return key
+
+    def decryptData(self, keyName):
+
+        f = Fernet(keyName)
+        encryptedFileName = self.fileName  + ".encrypted"
+        with open(encryptedFileName,'rb') as file:
+            data = file.read()
+
+        token = f.decrypt(data)
+
+        outputFile = self.fileName
+        self.outputFile(token, outputFile)
 
 
 if __name__ == "__main__":
@@ -36,7 +48,7 @@ if __name__ == "__main__":
     crypto = Cryptography(fileName)
     key = crypto.generateKey()
     crypto.encryptData(key)
-
+    crypto.decryptData(key)
 
 
 
