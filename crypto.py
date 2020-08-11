@@ -43,12 +43,12 @@ class Cryptography(object):
         self.outputFile(token, outputFile)
 
 
-if __name__ == "__main__":
-    fileName = "imp"
-    crypto = Cryptography(fileName)
-    key = crypto.generateKey()
-    crypto.encryptData(key)
-    crypto.decryptData(key)
+
+fileName = "test"
+crypto = Cryptography(fileName)
+key = crypto.generateKey()
+crypto.encryptData(key)
+crypto.decryptData(key)
 
 
 
