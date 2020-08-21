@@ -6,29 +6,48 @@ class Cryptography(object):
     def __init__(self,fileName):
         self.fileName = fileName
 
-    def encryptData(self, keyName):
-        """ Encrypts Data using Fernet class """
+    def encryption(self, keyName, output='result'):
+        """ 
+        Encrypts data using python's Cryptography module
+        keyName (str): key for encryption of data 
+        output (str): output file name of ecrypted data
+        (if no args are not given default is 'result.encrypted') 
+        """
         
-        f = Fernet(keyName)
-        with open(self.fileName, 'r') as file:
-            data = file.read()
+        try:
+            # add extension to the output file
+            output = output +".encypted" 
 
-        encodedData = data.encode()
-        token = f.encrypt(encodedData)
+            # init fernet class using key file given as a arg
+            f = Fernet(keyName)
 
-        newFileName = self.fileName + ".encrypted"
+            # read the data to encrypt from input file 
+            with open(self.fileName, 'r') as file:
+                data = file.read()
 
-        self.outputFile(token, newFileName)
-    
-    def outputFile(self, data, outputFileName):
-        with open(outputFileName, 'wb') as file:
-            file.write(data)
+            # encoded data 
+            encoded = data.encode()
+            # returns data with encyption
+            token = f.encrypt(encoded)
 
-    def generateKey(self):
+            # write the encypted data into the output file 
+            with open(output, 'wb') as file:
+                file.write(token)
+
+        except:
+            print("There was a error.")
+
+    def generateKey(self, keyfileName='key.key'):
+        """
+        Generates a random key for encyption and decryption
+        keyfileName (str): write the generated key and save as this file name
+        """
+        # generate a random key using fernet class 
         key = Fernet.generate_key()
-        with open("key.key",'wb') as file:
+        # write the generated key into a file and save it
+        with open(keyfileName, 'wb') as file:
             file.write(key)
-        return key
+        return keyfileName 
 
     def decryptData(self, keyName):
 
@@ -41,15 +60,4 @@ class Cryptography(object):
 
         outputFile = self.fileName
         self.outputFile(token, outputFile)
-
-
-
-fileName = "test"
-crypto = Cryptography(fileName)
-key = crypto.generateKey()
-crypto.encryptData(key)
-crypto.decryptData(key)
-
-
-
 
