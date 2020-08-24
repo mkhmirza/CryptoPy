@@ -1,12 +1,13 @@
 #!/usr/bin/python env
 
 from cryptography.fernet import Fernet
+import sys
 
 class Cryptography(object):
-    def __init__(self,fileName):
-        self.fileName = fileName
+    def __init__(self):
+        pass
 
-    def encryption(self, keyName, output='result'):
+    def encryption(self, keyName, inputfile, output='result'):
         """ 
         Encrypts data using python's Cryptography module
         keyName (str): key for encryption of data 
@@ -16,13 +17,13 @@ class Cryptography(object):
         
         try:
             # add extension to the output file
-            output = output +".encypted" 
+            output = output +".encrypted" 
 
             # init fernet class using key file given as a arg
             f = Fernet(keyName)
 
             # read the data to encrypt from input file 
-            with open(self.fileName, 'r') as file:
+            with open(inputfile, 'r') as file:
                 data = file.read()
 
             # encoded data 
@@ -35,7 +36,9 @@ class Cryptography(object):
                 file.write(token)
 
         except:
-            print("There was a error.")
+            print("There was an error.")
+            print("--------------------------------------")
+            print(f"Error: {sys.exc_info()[0]}")
 
     def generateKey(self, keyfileName='key.key'):
         """
@@ -49,15 +52,33 @@ class Cryptography(object):
             file.write(key)
         return keyfileName 
 
-    def decryptData(self, keyName):
+    def decryption(self, keyName, inputfile, output="result"):
+        """
+        Decrypts data using python's Cryptography module
+        keyName (str): key for decryption of data 
+        output (str): output file name of decrypted data
+        (if no args are not given default is 'result.txt') 
+        """
+        
+        try: 
+            # add extension to the output file
+            output = output +".txt" 
 
-        f = Fernet(keyName)
-        encryptedFileName = self.fileName  + ".encrypted"
-        with open(encryptedFileName,'rb') as file:
-            data = file.read()
+            # init fernet class using key file given as a arg
+            f = Fernet(keyName)
+            
+            # read the encypted from encrypted file  
+            with open(inputfile,'rb') as file:
+                data = file.read()
+    
+            token = f.decrypt(data)
 
-        token = f.decrypt(data)
+            # write the encypted data into the output file with txt file
+            with open(output, 'w') as file:
+                file.write(token.__str__())
+        except:
+            print("There was an error.")   
+            print("--------------------------------------")
+            print(f"Error: {sys.exc_info()[0]}")
 
-        outputFile = self.fileName
-        self.outputFile(token, outputFile)
 
