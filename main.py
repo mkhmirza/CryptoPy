@@ -5,17 +5,17 @@ import sys
 from crypto import  Cryptography
 
 def usage():
-    print()
     print(f"usage: {sys.argv[0]} -i <input-filename(with extension)> [OPTIONS...]")
-    print(f"usage: {sys.argv[0]} -i <input-filename(with extension)> -k -v")
-    print(f"usage: {sys.argv[0]} -i <input-filename(with extension)> -k -o <outputfile(without extension)>")
-    print(f"usage: {sys.argv[0]} -i <input-filename(with extension)> -f <keyfilename(with extension)>")
-    print(f"usage: {sys.argv[0]} -i <input-filename(with extension)> -f <keyfilename(with extension)> -o <outputfile(without extension)>")
+    print(f"usage: {sys.argv[0]} -i <input-filename(with extension)> [OPTIONS...] -k -v")
+    print(f"usage: {sys.argv[0]} -i <input-filename(with extension)> [OPTIONS...] -k -o <outputfile(without extension)>")
+    print(f"usage: {sys.argv[0]} -i <input-filename(with extension)> [OPTIONS...] -f <keyfilename(with extension)>")
+    print(f"usage: {sys.argv[0]} -i <input-filename(with extension)> [OPTIONS...] -f <keyfilename(with extension)> -o <outputfile(without extension)>")
     print()
-    print("Options: ")
-    print("-h,   prints out help and exits")
-    print("-e,   encryption option")
-    print("-d,   decryption option") 
+
+    print("options: ")
+    print("-h,   prints this usage and exits")
+    print("-e,   encryption operation to be performed")
+    print("-d,   decryption operation to be performed") 
     print("-i,   specify input file (with extension)")
     print("-k,   generates a new keyfile")
     print("-f    specify keyfilename (with extension)")
@@ -34,6 +34,7 @@ except getopt.GetoptError as err:
     usage()
     sys.exit(2)
 
+# encryption and decryption option given 
 encryption = False
 decryption = False
 
@@ -62,6 +63,25 @@ for opt, arg in opts:
     elif opt == '-v':
         verbose = True
 
+getOptions = [x[0] for x in opts]
+# raise error if options -e and -d are used together 
+if '-e' in getOptions and '-d' in getOptions:
+    print("Options '-e' and '-d' cannot be used together")
+    usage()
+    sys.exit()
+
+# raise error if options -e and -d are used together 
+if '-k' in getOptions and '-f' in getOptions:
+    print("Options '-k' and '-f' cannot be used together")
+    usage()
+    sys.exit()
+
+# decryption can only be done by existing key file
+if '-f' in getOptions and '-d' in getOptions:
+    print("Options '-e' and '-d' cannot be used together")
+    print("Decryption can only be done by existing key file.")
+    usage()
+    sys.exit()
 
 # -k -> generate random key
 # -f -> specify existing keyfile
@@ -71,7 +91,7 @@ if len(opts) == 0 or inputfile == None or keyfile == None:
     usage()
     sys.exit(2)
 
-crypto = Cryptography(inputfile)
+crypto = Cryptography()
 
 # opts -k were given 
 # if this is not true then meaning -f opts were given 
@@ -88,19 +108,30 @@ with open(keyfile, 'r') as f:
 
 # no output file was given
 if outputfile == None:    
+   
     if verbose:
-        print("Encypting input file")
         print(f"Keyfile: {keyfile}")
-    # encypt data using key and use default output filename
-    crypto.encryption(key)
+   
+    # encyption option without output filename
+    if encryption == True:
+        crypto.encryption(key, inputfile)
+   
+    # decryption option without output filename
+    elif decryption == True:
+        crypto.decryption(key, inputfile)
+
 # output file was given
 else:
     if verbose:
-        print("Encypting input file")
         print(f"Keyfile: {keyfile}")
         print(f"Outputfile: {outputfile}")
-    # encypt data using key and given output filename
-    crypto.encryption(key, outputfile)
+    # encyption option with output file
+    if encryption == True:
+        crypto.encryption(key, inputfile, outputfile)
+   
+    # decryption option with output file 
+    elif decryption == True:
+        crypto.decryption(key, inputfile, outputfile)
 
 
 
