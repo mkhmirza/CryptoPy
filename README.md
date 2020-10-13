@@ -15,12 +15,8 @@ usage: `main.py -h`
 1. `main.py -i <input-filename(with extension)> -d -f <keyfilename(with extension)> -v`
 2. `main.py -i <input-filename(with extension)> -d -f <keyfilename(with extension)> -o <outputfile(without extension)>`    
 
-## Installing Crytography library
-**python3**
-```
-$ pip3 install cryptography
-```
-### Documentation 
+
+## Documentation 
 Documentation of Cryptography Library can be viewed at [Cryptography Library Python](https://cryptography.io/en/latest/)
 
 
