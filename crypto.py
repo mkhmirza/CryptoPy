@@ -18,23 +18,28 @@ class Cryptography(object):
         try:
             # add extension to the output file
             output = output +".encrypted" 
-
             # init fernet class using key file given as a arg
             f = Fernet(keyName)
-
+            
             # read the data to encrypt from input file 
             with open(inputfile, 'r') as file:
-                data = file.read()
-
-            # encoded data 
-            encoded = data.encode()
-            # returns data with encyption
-            token = f.encrypt(encoded)
-
-            # write the encypted data into the output file 
-            with open(output, 'wb') as file:
-                file.write(token)
-
+                data = file.readlines()
+            
+            # removing newline and encoding
+            encoded = []
+            for i in range(0, len(data)):
+                data[i] = data[i].strip('\n')
+                encoded.append(data[i].encode())
+            
+            # encrypting each ecoded line and writing it to a file
+            token = []
+            for i in encoded:
+                token.append(f.encrypt(i))
+            print(data)
+            with open(output, 'w') as f:
+                for tok in token:
+                    f.writelines(tok.decode())
+                    f.writelines("\n")
         except:
             print("There was an error.")
             print("--------------------------------------")
@@ -66,16 +71,22 @@ class Cryptography(object):
 
             # init fernet class using key file given as a arg
             f = Fernet(keyName)
-            
+
             # read the encypted from encrypted file  
             with open(inputfile,'rb') as file:
-                data = file.read()
-    
-            token = f.decrypt(data)
+                data = file.readlines()
 
-            # write the encypted data into the output file with txt file
+            token = []
+            for i in range(0, len(data)):
+                # data[i] = data[i].decode()
+                # data[i] = data[i].strip('\n')
+                token.append(f.decrypt(data[i]))
+            
+            #  write the encypted data into the output file with txt file
             with open(output, 'w') as file:
-                file.write(token.__str__())
+                for i in token:
+                    file.writelines((i.decode()).__str__())
+                    file.writelines("\n")
         except:
             print("There was an error.")   
             print("--------------------------------------")
